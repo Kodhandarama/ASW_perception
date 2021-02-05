@@ -60,10 +60,10 @@ p3 = p1;
 fmax = 10000; 
 
 % alpha1 = corresponds to choosing the starting vowel 1- /i/, 6 - /a/, 9 -/u/
-alpha1 = 1; 
+alpha1 = 9; 
 
 % alpha2 = corresponds to choosing the ending vowel 1- /i/, 6 - /a/, 9 -/u/
-alpha2 = 1;
+alpha2 = 9;
 
 % t_length_rise_fall = correspondings to number of samples for rise and fall time
 t_length_rise_fall = (fs)/16; 

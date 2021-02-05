@@ -38,7 +38,13 @@ i = 1;
 noise1 = wgn(length(e),1,(10*log10((rms(e)^2)/(10^(required_snr/10)))))';
 OBnoise250  = filter(octavebandfilter250,noise1);
 snrr = snr(e,OBnoise250);
-e4 = e + OBnoise250;
+gamma = (snrr/required_snr);
+alpha = ((rms(e)^2)/(rms(OBnoise250)^2))^((gamma -1)/gamma);
+scaling_factor = sqrt(alpha);
+
+e4 = e + (OBnoise250 * scaling_factor);
+check_snr = snr(e4,OBnoise250 * scaling_factor);
+
 %plot(t,e4)
 
 %x2=awgn(x1,50);

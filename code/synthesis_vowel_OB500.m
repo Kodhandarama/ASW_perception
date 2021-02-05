@@ -35,11 +35,66 @@ i = 1;
 % e4=awgn(e,10,'measured');
 
 %required_snr =10;
-noise1 = wgn(length(e),1,(10*log10((rms(e)^2)/(10^(required_snr/10)))))';
+noise1 = wgn(length(e),1,10*log10((rms(e)^2)/(10^(required_snr/10))));
 OBnoise500  = filter(octaveband500,noise1);
-snrr = snr(e,OBnoise500);
-e4 = e + OBnoise500;
+snrr = snr(e,OBnoise500');
+
+gamma = (snrr/required_snr);
+alpha = ((rms(e)^2)/(rms(OBnoise500)^2))^((gamma -1)/gamma);
+scaling_factor = sqrt(alpha);
+
+e4 = e + (OBnoise500' * scaling_factor);
+check_snr = snr(e4',OBnoise500 * scaling_factor);
 %plot(t,e4)
+
+% eyn =fft(e);
+% en = length(e);          % number of samples
+% ef = (0:en-1)*(fs/en);     % frequency range
+% epower = abs(eyn).^2/en;    % power of the DFT% eyn =fft(e);
+% en = length(e);          % number of samples
+% ef = (0:en-1)*(fs/en);     % frequency range
+% epower = abs(eyn).^2/en;    % power of the DFT
+% % 
+% plot(ef/1000,10*log10(epower),'r')
+% xlabel('Frequency')
+% ylabel('Power')
+% % eyn =fft(e);
+% en = length(e);          % number of samples
+% ef = (0:en-1)*(fs/en);     % frequency range
+% epower = abs(eyn).^2/en;    % power of the DFT
+% % 
+% plot(ef/1000,10*log10(epower),'r')
+% xlabel('Frequency')
+% ylabel('Power')
+% 
+% hold on
+
+% hold on
+
+% % 
+% plot(ef/1000,10*log10(epower),'r')
+% xlabel('Frequency')
+% ylabel('Power')% eyn =fft(e);
+% en = length(e);          % number of samples
+% ef = (0:en-1)*(fs/en);     % frequency range
+% epower = abs(eyn).^2/en;    % power of the DFT
+% % 
+% plot(ef/1000,10*log10(epower),'r')
+% xlabel('Frequency')
+% ylabel('Power')
+% 
+% hold on
+
+% 
+% hold on
+
+% plot(OBnoise500)
+
+% 
+% pwelch(OBnoise500 * alpha,[],[],[],fs)
+
+
+
 
 %x2=awgn(x1,50);
 % plot(t,e4)

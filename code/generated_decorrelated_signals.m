@@ -27,10 +27,10 @@ sound_array_6 = [zeros(1,r6) ,vowel_sound' , zeros(1, 500000 -length(vowel_sound
 
 N_channel_array = zeros(500000,6);
 %N_channel_array(:,1) = sound_array_1;
-N_channel_array(:,2) = sound_array_2;
-N_channel_array(:,3) = sound_array_3;
-N_channel_array(:,4) = sound_array_4;
-N_channel_array(:,5) = sound_array_5;
+N_channel_array(:,2) = sound_array_2./2;
+N_channel_array(:,3) = sound_array_3./2;
+N_channel_array(:,4) = sound_array_4./2;
+N_channel_array(:,5) = sound_array_5./2;
 %N_channel_array(:,6) = sound_array_6;
 
 audiowrite('exptstimuli.wav',N_channel_array,48000)
