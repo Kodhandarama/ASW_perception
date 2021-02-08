@@ -41,7 +41,7 @@ i = 1;
 
 %x2=awgn(x1,50);
 % plot(t,e4)
-[a,x1,f1_freq,sigma_freq] = genH1_vowel(8000,f_from,bw_from,e);
+[a,x1,f1_freq,sigma_freq] = genH1_vowel(fs,f_from,bw_from,e);
 x1_rs = resample(x1,48000,fs); 
 fs = 48000; 
 %env = sin(2*pi*2*t); 
@@ -68,10 +68,9 @@ reconst2=awgn(reconst1,10,'measured');
 % noisy_signal = reconst1 + noise1;
 % plot(t,noisy_signal)
 
-% audiowrite(filename,4*reconst1,fs,'Bitspersample',16);
+audiowrite(filename,4*reconst1,fs,'Bitspersample',16);
 
 player = audioplayer(4*reconst1,fs);
 play(player);
-
 cnt1 = cnt1+1;
 end
