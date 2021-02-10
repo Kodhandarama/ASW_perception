@@ -1,53 +1,105 @@
-% clc;
-% clear all;
-
-[vowela,fs] =  audioread("natural_vowel_A.wav");
+clc;
+clear all;
+load("lowpass4000.mat");
+load("lowpass8000.mat");
+%%%%%%%%%%%%%%%%%%Loading vowel %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[vowela,fs] =  audioread("natural_vowel_i.wav");
 segmentlen = 100;
 noverlap = 90;
 NFFT = 128;
  
 % spectrogram(vowela,segmentlen,noverlap,NFFT,fs,'yaxis')
 % title('Signal Spectrogram')
-
+% plot(vowela)
+%%%%%%%%%%%%%%%%Extracting 30ms%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 dt = 1/fs;
 I0 = round(3/dt);
 Iend = round(3.03/dt);
 x = vowela(I0:Iend);
 % x=vowela;
 % spectrogram(x,segmentlen,noverlap,NFFT,fs,'yaxis');
-signal =x;
-yn =fft(signal);
-n = length(signal);     % number of samples
-f = (0:n-1)*(fs/n);     % frequency range
-power = abs(yn).^2/n;    % power of the DFT
-% 
-% plot(f,power,'r')
+% signal =x;
+% yn =fft(signal);
+% n = length(signal);     % number of samples
+% f = (0:n-1)*(fs/n);     % frequency range
+% power = abs(yn).^2/n;    % power of the DFT
+% plot(f,10*log10(power),'b')
 % xlabel('Frequency')
 % ylabel('Power')
-% hold on;
-x1 = filter(lowpass4000,x);%order200 equiripple FIR filter
+% % hold on;
+%%%%%%%%%%%%%%%%%%%%%%%%%lowpass filter and resample%%%%%%%%%%%%%%%%%%%%%%%%%%%
+x1 = filter(lowpass8000,x);%order200 equiripple FIR filter
 % x1 = x.*hamming(length(x));
-x2 =  resample(x,1,6);
-
+% plot(x1)
+fs2=16000;
+x2 =  resample(x,1,3);
+% plot(x2)
 signal =x2;
-yn =fft(signal);
+yn =fft(signal,fs2);
+freqsignal=yn;
 n = length(signal);     % number of samples
-f = (0:n-1)*(fs/n);     % frequency range
+f = (0:fs2-1); 
+f2= fs2*(0:(n/2))/n% frequency range
 power = abs(yn).^2/n;    % power of the DFT
 % 
-plot(f,power,'r')
+plot(10*log10(power),'r')
 xlabel('Frequency')
-ylabel('Power')
-
+ylabel('Power(in dB)')
+hold on
+%%%%%%%%%%%%%%%%%%Create transferfunction%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % spectrogram(x2,segmentlen,noverlap,NFFT,fs,'yaxis');
-A = lpc(x2,30);
+[A,G] = lpc(x2,16);
 rts = roots(A);
+val1=[];
+gg=zeros([1 8000]);
+for p = 1:length(A)
+    sum=zeros([1 8000]);
+%     for r= 0:7999
+% %     temp=A(p)*exp(-1i*2*pi*(p-1)*f(r));
+% %     sum=sum+temp;
+%     end
+    gg=gg+sum;
+%     if(imag(A(p)*exp(-1i*2*pi*f*(p-1)))>=0);
+%     temp=A(p)*exp(-1i*2*pi*f*(p-1));
+%     temp2=[];
+%     for d =1:length(temp)
+%         if(imag(temp(d))>=0)
+%             temp2(end+1) =temp(d);
+%         end
+%     end
+%     val1(end+1,:) = temp2;
+%     end
+end
+val2 = gg.^2;
+val3 = 1./val2;
+ 
+hold on
+% plot(f,val3);
+howega = freqz(1,A,fs2,'whole');
+% f2 =1:512;
+plot(f,10*log10(howega.^2));
+% plot(f,howega)
+% excitation =filter(howega,1,freqsignal);
 
+% plot(f,excitation)
+
+% exc =ifft(excitation);
+nnn= 0:7999;
+% plot(nnn,exc);
+synthesis_signalfq = filter(1,A,freqsignal);
+synthesis_signaltime = ifft(synthesis_signalfq);
+hold off
+% plot(nnn,synthesis_signaltime)
+
+synn = filter(A,1,synthesis_signalfq);
+timesynn = ifft(synn);
+% player = audioplayer(10*timesynn,fs);
+% play(player);
 rts = rts(imag(rts)>=0);
 angz = atan2(imag(rts),real(rts));
 
 [frqs,indices] = sort(angz.*(fs/(2*pi)));
-bw = -1/2*(fs/(2*pi))*log(abs(rts(indices)));
+% bw = -1/2*(fs/(2*pi))*log(abs(rts(indices)));
 
 nn = 1;
 formants=[];
@@ -55,15 +107,16 @@ bws=[];
 for kk = 1:length(frqs)
     if (frqs(kk)<5500)
         formants(end+1) = frqs(kk);
-        bws(end+1) = bw(kk);
+%         bws(end+1) = bw(kk);
         disp("Formant_freq")
-        disp(frqs(kk));disp("bw");disp(bw(kk))
+        disp(frqs(kk));
+%         disp("bw");disp(bw(kk))
 %         nn = nn+1;
     end
 end
 fprintf('%.2f\n',formants)
 disp("__________________")
-fprintf('%.2f\n',bws)
+% fprintf('%.2f\n',bws)
 
 
 
