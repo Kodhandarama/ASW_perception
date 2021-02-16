@@ -16,20 +16,21 @@ function synthesis_vowel(filename,required_snr,vowel,BPnoisefilter)
 load('A_filters.mat')
 load('U_filters.mat')
 load('I_filters.mat')
+load('lowpass8000.mat')
 if vowel =='u'
-    formantfrequencies = [0;8.137379860485678e+02;8.289291450254506e+03;1.128848840293356e+04;1.316848283116524e+04;1.995107405625682e+04;24000];
+    formantfrequencies =[3.003026855940335e+02;7.954768614998890e+02;2.661853608095359e+03;3.978227127882288e+03;5.591652541116806e+03;6.901630916678682e+03];
     disp(formantfrequencies)
-    formantbandwidths = [3.458666408519700e+03;15.204446274536176;2.729755295984317e+02;5.851405100281479e+02;3.320580227512421e+02;5.645622976479822e+02;2.395823453461553e+03];
+    formantbandwidths = [1.702156128071690e+02;7.886552140313381e+02;1.249361505587880e+03;4.272802663130470e+02;9.424358141279184e+02;8.789760848127233e+02] ;
     disp(formantbandwidths)
 elseif vowel =='a'
-    formantfrequencies = [9.009080567820000e+02;2.386430584500006e+03;7.985560824286130e+03;1.193468138364595e+04;1.677495762334844e+04;2.070489275003444e+04];
+    formantfrequencies =[5.410620709993296e+02;9.069264653368799e+02;3.055827845272298e+03;3.809542593030164e+03;4.908024113732064e+03;6.660463644073904e+03];
     disp(formantfrequencies)
-    formantbandwidths = [1.276617096053110e+02;5.914914105230733e+02;9.370211291905515e+02;3.204601997347764e+02;7.068268605940416e+02;6.592320636086818e+02];
+    formantbandwidths = [8.356374707120132e+02;2.786481867958067e+02;5.205773316900729e+02;7.419174777255422e+02;3.695845922647997e+02;8.779549046707975e+02];
     disp(formantbandwidths)
 elseif vowel =='i'
-    formantfrequencies = [1.623186212997911e+03;2.720779396010570e+03;9.167483535817046e+03;1.142862777909051e+04;1.472407234119623e+04;1.998139093222166e+04];
+    formantfrequencies = [2.712459953495215e+02;2.763097150084811e+03;3.762829467644453e+03;4.389494277055094e+03;6.650358018752457e+03;8000];
     disp(formantfrequencies)
-    formantbandwidths = [6.267281030342111e+02;2.089861400968550e+02;3.904329987676243e+02;5.564381082943431e+02;2.771884441987015e+02;6.584661785032197e+02];
+    formantbandwidths = [20.272595032714330;3.639673727978932e+02;7.801873467040509e+02;4.427440303348383e+02;7.527497301968866e+02;3.194431271284122e+03];
     disp(formantbandwidths)
 else 
     disp("Invalid vowel")
@@ -60,7 +61,7 @@ snrr = snr(e,BPnoise);
 gamma = (snrr/required_snr);
 alpha = ((rms(e)^2)/(rms(BPnoise)^2))^((gamma -1)/gamma);
 scaling_factor = sqrt(alpha);
-
+% pwelch(BPnoise * scaling_factor)
 excitation = e + (BPnoise * scaling_factor);
 check_snr = snr(e,BPnoise .* scaling_factor);
 
@@ -81,13 +82,20 @@ fs = 48000;
 x = x1_rs; %(1:length(env_seq)).*env_seq; 
 filename = 'test4.wav'
 reconst_new = ramp_fix(x,fs,t_length_rise_fall); %62.5 ms
-[b_coeff,a_coeff] = butter(10,4000/(fs/2)); %butter(20,10000/(fs/2));
+[b_coeff,a_coeff] = butter(10,8000/(fs/2)); %butter(20,10000/(fs/2));
 r_filt = filter(b_coeff,a_coeff,reconst_new);
 reconst1 = r_filt/norm(r_filt) * 15;
-% audiowrite(filename,1000*reconst1,fs,'Bitspersample',32);
+audiowrite(filename,reconst1,fs,'Bitspersample',16);
 %cnt1 = cnt1+1;
-%
-player = audioplayer(4*reconst1,fs);
-play(player);
-a=5
+% %
+% player = audioplayer(4*reconst1,fs);
+% play(player);
+
+generated_decorrelated_signals();
+str = ['killall python3'];
+unix(str)
+str2 = ['python3 play_8chn.py ' 'test4decorrelated.wav' ' &'];
+unix(str2)
+
+temporaryvar=5
 end

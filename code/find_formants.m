@@ -4,7 +4,7 @@ load("lowpass4000.mat");
 load("lowpass8000.mat");
 load("lowpass8000_2.mat");
 %%%%%%%%%%%%%%%%%%Loading vowel %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[vowela,fs] =  audioread("natural_vowel_i.wav");
+[vowela,fs] =  audioread("natural_vowel_u.wav");
 segmentlen = 100;
 noverlap = 90;
 NFFT = 128;
@@ -14,7 +14,7 @@ NFFT = 128;
 % plot(vowela)
 %%%%%%%%%%%%%%%%Extracting 30ms%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 dt = 1/fs;
-I0 = round(3/dt);
+I0 = round(3.00/dt);
 Iend = round(3.03/dt);
 x = vowela(I0:Iend);
 % x=vowela;
@@ -29,9 +29,9 @@ x = vowela(I0:Iend);
 % ylabel('Power')
 % % hold on;
 %%%%%%%%%%%%%%%%%%%%%%%%%lowpass filter and resample%%%%%%%%%%%%%%%%%%%%%%%%%%%
-x1 = filter(lowpass8000_2,x);%order200 equiripple FIR filter
+x1 = filter(lowpass8000,x);%order200 equiripple FIR filter
 % x1 =resample(x,1,3);
-% x1 = x1.*hamming(length(x1));
+x1 = x1.*hamming(length(x1));
 % plot(x1)
 fs2=16000;
 % x2=filter(lowpass8000_2,x1);
@@ -51,7 +51,7 @@ ylabel('Power(in dB)')
 % hold on
 % %%%%%%%%%%%%%%%%%%Create transferfunction%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % spectrogram(x2,segmentlen,noverlap,NFFT,fs,'yaxis');
-[A,G] = lpc(x2,12);
+[A,G] = lpc(x2,16);
 rts = roots(A);
 % val1=[]; gg=zeros([1 8000]); for p = 1:length(A)
 %     sum=zeros([1 8000]); for r= 0:7999
@@ -81,7 +81,7 @@ plot(f,10*log10(homega.^2)-50);
 nnn= 1:481;
 % plot(nnn,exc);
 synthesis_signaltime = filter(sqrt(G)*length(x2),A,x2);
-synthesis_signalfq = fft(synthesis_signaltime,481);
+synthesis_signalfq = fft(synthesis_signaltime,241);
 hold off
 % plot(nnn,synthesis_signaltime)
 % plot(nnn,synthesis_signaltime)
@@ -94,22 +94,22 @@ timesynn = ifft(synn);
 rts = rts(imag(rts)>=0);
 angz = atan2(imag(rts),real(rts));
 
-[formantfrequencies,indices] = sort(angz.*(fs/(2*pi)));
-formantbandwidths = -1/2*(fs/(2*pi))*log(abs(rts(indices)));
+[formantfrequencies,indices] = sort(angz.*(fs2/(2*pi)));
+formantbandwidths = -1/2*(fs2/(pi))*log(abs(rts(indices)));
 
 nn = 1;
 formants=[];
 bws=[];
-% for kk = 1:length(frqs)
-%     if (frqs(kk)<5500)
-%         formants(end+1) = frqs(kk);
-% %         bws(end+1) = bw(kk);
-%         disp("Formant_freq")
-%         disp(frqs(kk));
-% %         disp("bw");disp(bw(kk))
-% %         nn = nn+1;
-%     end
-% end
+for kk = 1:length(formantfrequencies)
+    if (formantfrequencies(kk)<5500  & formantbandwidths(kk)<400)
+        formants(end+1) = formantfrequencies(kk);
+%         bws(end+1) = bw(kk);
+        disp("Formant_freq")
+        disp(formantfrequencies(kk));
+        disp("bw");disp(formantbandwidths(kk))
+%         nn = nn+1;
+    end
+end
 fprintf('%.2f\n',formantfrequencies)
 disp("__________________")
 % fprintf('%.2f\n',bws)
