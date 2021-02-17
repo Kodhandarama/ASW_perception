@@ -14,8 +14,8 @@ NFFT = 128;
 % plot(vowela)
 %%%%%%%%%%%%%%%%Extracting 30ms%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 dt = 1/fs;
-I0 = round(3.00/dt);
-Iend = round(3.03/dt);
+I0 = round(5.12/dt);
+Iend = round(5.15/dt);
 x = vowela(I0:Iend);
 % x=vowela;
 % spectrogram(x,segmentlen,noverlap,NFFT,fs,'yaxis');
@@ -30,6 +30,17 @@ x = vowela(I0:Iend);
 % % hold on;
 %%%%%%%%%%%%%%%%%%%%%%%%%lowpass filter and resample%%%%%%%%%%%%%%%%%%%%%%%%%%%
 x1 = filter(lowpass8000,x);%order200 equiripple FIR filter
+
+% signal =x1;
+% yn =fft(signal);
+% n = length(signal);     % number of samples
+% f = (0:n-1)*(fs/n);     % frequency range
+% power = abs(yn).^2/n;    % power of the DFT
+% plot(f,10*log10(power),'b')
+% xlabel('Frequency')
+% ylabel('Power')
+% 
+
 % x1 =resample(x,1,3);
 x1 = x1.*hamming(length(x1));
 % plot(x1)
@@ -51,7 +62,7 @@ ylabel('Power(in dB)')
 % hold on
 % %%%%%%%%%%%%%%%%%%Create transferfunction%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % spectrogram(x2,segmentlen,noverlap,NFFT,fs,'yaxis');
-[A,G] = lpc(x2,16);
+[A,G] = lpc(x2,12);
 rts = roots(A);
 % val1=[]; gg=zeros([1 8000]); for p = 1:length(A)
 %     sum=zeros([1 8000]); for r= 0:7999
