@@ -1,4 +1,4 @@
-function generated_decorrelated_signals()
+function generated_decorrelated_signals(filename)
 N = 500000; % sample size
 Fs= 48000;
 t = (1:N)*(1/Fs);
@@ -6,7 +6,7 @@ t = (1:N)*(1/Fs);
 % 1 second =  48000 samples
 % 30 ms = 1440 samples
 
-[vowel_sound,Fs] = audioread('test4.wav');
+[vowel_sound,Fs] = audioread('single_channel_stimuli.wav');
 r = 615;
 sound_array_1 = [zeros(1,r) ,vowel_sound' , zeros(1, 500000 -length(vowel_sound) - r)];
 r2 = 547;
@@ -33,6 +33,6 @@ N_channel_array(:,4) = sound_array_4./4;
 N_channel_array(:,5) = sound_array_5./4;
 N_channel_array(:,6) = sound_array_6;
 
-audiowrite('test4decorrelated.wav',N_channel_array,48000)
+audiowrite(filename,N_channel_array,48000)
 
 end

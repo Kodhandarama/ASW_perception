@@ -78,7 +78,7 @@ rts = rts(imag(rts)>=0);
 angz = atan2(imag(rts),real(rts));
 
 [formantfrequencies,indices] = sort(angz.*(fs2/(2*pi)));
-formantbandwidths = -1/2*(fs2/(pi))*log(abs(rts(indices)));
+formantbandwidths = -1*(fs2/(pi))*log(abs(rts(indices)));
 
 nn = 1;
 formants=[];
