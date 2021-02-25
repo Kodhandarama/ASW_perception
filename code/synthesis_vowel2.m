@@ -12,7 +12,7 @@
 % clc;
 
 %addpath '/home/arthi/matlab/Functions/spectrogram/' '/home/arthi/matlab/Functions/Auditory toolbox/'; 
-function synthesis_vowel(filename,required_snr,vowel,BPnoisefilter)
+function synthesis_vowel2(filename,required_snr,vowel,BPnoisefilter,modsigma)
 % load('A_filters.mat')
 % load('U_filters.mat')
 % load('I_filters.mat')
@@ -30,16 +30,16 @@ if vowel =='u'
 6897.899
 8000]
     disp(formantfrequencies)
-    formantbandwidths = [47.92/2
-76.90111111/2
-500.6022222/2
-568.3688889/2
-251.0244444/2
-516.2144444/2
-645.5211111/2
-594.1455556/2
-375.0477778/2
-426.3288889/2]
+    formantbandwidths = [47.92 * modsigma
+76.90111111* modsigma
+500.6022222* modsigma
+568.3688889* modsigma
+251.0244444* modsigma
+516.2144444* modsigma
+645.5211111* modsigma
+594.1455556* modsigma
+375.0477778* modsigma
+426.3288889* modsigma]
     disp(formantbandwidths)
 elseif vowel =='a'
 formantfrequencies =[73.914
@@ -53,16 +53,16 @@ formantfrequencies =[73.914
 6505.292
 6956.786]
 disp(formantfrequencies)
-formantbandwidths = [826.616/2
-123.92/2
-186.428/2
-204.724/2
-208.746/2
-330.352/2
-143.37/2
-167.864/2
-718.678/2
-271.586/2]
+formantbandwidths = [826.616
+123.92* modsigma
+186.428
+204.724
+208.746
+330.352
+143.37
+167.864
+718.678
+271.586]
 disp(formantbandwidths)
 elseif vowel =='i'
     formantfrequencies = [287.364
@@ -76,16 +76,16 @@ elseif vowel =='i'
 7781.95
 8000]
     disp(formantfrequencies)
-    formantbandwidths = [23.71/2
-465.066/2
-175.5028571/2
-1188.714/2
-121.048/2
-63.454/2
-163.355/2
-194.991/2
-688.355/2
-2615.316/2]
+    formantbandwidths = [23.71* modsigma
+465.066* modsigma
+175.5028571* modsigma
+1188.714* modsigma
+121.048* modsigma
+63.454* modsigma
+163.355* modsigma
+194.991* modsigma
+688.355* modsigma
+2615.316* modsigma]
     disp(formantbandwidths)
 else 
     disp("Invalid vowel")
@@ -112,7 +112,9 @@ noise1 = wgn(length(e),1,(10*log10((rms(e)^2)/(10^(required_snr/10)))))';
 
 BPnoise  = filter(BPnoisefilter,noise1);
 snrr = snr(e,BPnoise);
-
+if(required_snr == 0)
+   required_snr=required_snr+0.001; 
+end
 gamma = (snrr/required_snr);
 alpha = ((rms(e)^2)/(rms(BPnoise)^2))^((gamma -1)/gamma);
 scaling_factor = sqrt(alpha);
@@ -122,20 +124,14 @@ check_snr = snr(e,BPnoise .* scaling_factor);
 
 
 snrr = snr(e,noise1);
-excitation = e + noise1;
+exc = e + noise1;
 
 
 [a,x1,f1_freq,sigma_freq] = genH1_vowel(fs,formantss,bandw,excitation) ;
 x1_rs = resample(x1,48000,fs); 
 fs = 48000; 
-%env = sin(2*pi*2*t); 
-%env = gampdf(t(1:fs+fs/2),3,1/10);
-%delay = 20e-3*fs + (100e-3*fs)*rand(1,10);delay = round(delay);
-%env_seq = [env zeros(1,delay(1)) env zeros(1,delay(2)) env zeros(1,delay(3)) env zeros(1,delay(4)) ...
-%    env zeros(1,delay(5)) env zeros(1,delay(6)) env zeros(1,delay(7)) env zeros(1,delay(8)) env zeros(1,delay(9)) env zeros(1,delay(10))]; 
-%env_seq = [env env env env env env env env env env]; 
-x = x1_rs; %(1:length(env_seq)).*env_seq; 
-% filename = 'test4.wav'
+
+x = x1_rs; 
 reconst_new = ramp_fix(x,fs,t_length_rise_fall); %62.5 ms
 [b_coeff,a_coeff] = butter(10,8000/(fs/2)); %butter(20,10000/(fs/2));
 r_filt = filter(b_coeff,a_coeff,reconst_new);
@@ -143,14 +139,14 @@ reconst1 = r_filt/norm(r_filt) * 15;
 audiowrite('single_channel_stimuli.wav',reconst1,fs,'Bitspersample',16);
 %cnt1 = cnt1+1;
 % %
-% player = audioplayer(4*reconst1,fs);
-% play(player);
+player = audioplayer(4*reconst1,fs);
+play(player);
 
 generated_decorrelated_signals(filename);
-str = ['killall python3'];
-unix(str)
-str2 = ['python3 play_8chn.py ' filename ' &'];
-unix(str2)
+% str = ['killall python3'];
+% unix(str)
+% str2 = ['python3 play_8chn.py ' filename ' &'];
+% unix(str2)
 % [final_stimuli,Fs] = audioread(filename);
 % player = audioplayer(final_stimuli,Fs);
 % play(player);

@@ -24,7 +24,7 @@ print("number of channels :",chn)
 stream = p.open(format = p.get_format_from_width(wf.getsampwidth()),
                 #channels =2 
                 channels=wf.getnchannels(),
-		#output_device_index=6,
+		output_device_index=6,
                 rate = wf.getframerate(),
                 output = True)
 # print stream
