@@ -30,16 +30,16 @@ if vowel =='u'
 6897.899
 8000]
     disp(formantfrequencies)
-    formantbandwidths = [47.92 * modsigma
-76.90111111* modsigma
-500.6022222* modsigma
-568.3688889* modsigma
-251.0244444* modsigma
-516.2144444* modsigma
-645.5211111* modsigma
-594.1455556* modsigma
-375.0477778* modsigma
-426.3288889* modsigma]
+    formantbandwidths = [47.92 
+76.90111111
+500.6022222
+568.3688889
+251.0244444
+516.2144444
+645.5211111
+594.1455556
+375.0477778
+426.3288889]
     disp(formantbandwidths)
 elseif vowel =='a'
 formantfrequencies =[73.914
@@ -54,9 +54,9 @@ formantfrequencies =[73.914
 6956.786]
 disp(formantfrequencies)
 formantbandwidths = [826.616
-123.92* modsigma
+123.92
 186.428
-204.724
+204.724 *modsigma
 208.746
 330.352
 143.37
@@ -76,16 +76,16 @@ elseif vowel =='i'
 7781.95
 8000]
     disp(formantfrequencies)
-    formantbandwidths = [23.71* modsigma
-465.066* modsigma
-175.5028571* modsigma
-1188.714* modsigma
-121.048* modsigma
-63.454* modsigma
-163.355* modsigma
-194.991* modsigma
-688.355* modsigma
-2615.316* modsigma]
+    formantbandwidths = [23.71
+465.066
+175.5028571
+1188.714
+121.048
+63.454
+163.355
+194.991
+688.355
+2615.316]
     disp(formantbandwidths)
 else 
     disp("Invalid vowel")
@@ -98,7 +98,7 @@ t = [0:(T*fs)-1]/fs;
 cnt1 = 1;
 
 % %formant frequency and bandwidth
-change1= 0; change2 = 0; 
+% change1= 0; change2 = 0; 
 % f_from = form_freq(alpha1,:)*(1+change1) ;
 % f_to = form_freq(alpha2,:)*(1+change2);
 % [bw_from,bw_to] = bw_adjust(alpha1,alpha2,change1,change2,form_freq);
@@ -136,7 +136,7 @@ reconst_new = ramp_fix(x,fs,t_length_rise_fall); %62.5 ms
 [b_coeff,a_coeff] = butter(10,8000/(fs/2)); %butter(20,10000/(fs/2));
 r_filt = filter(b_coeff,a_coeff,reconst_new);
 reconst1 = r_filt/norm(r_filt) * 15;
-audiowrite('single_channel_stimuli.wav',reconst1,fs,'Bitspersample',16);
+audiowrite('single_channel_stimuli.wav',4*reconst1,fs,'Bitspersample',16);
 %cnt1 = cnt1+1;
 % %
 player = audioplayer(4*reconst1,fs);

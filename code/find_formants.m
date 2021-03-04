@@ -4,7 +4,7 @@ load("lowpass4000.mat");
 load("lowpass8000.mat");
 load("lowpass8000_2.mat");
 %%%%%%%%%%%%%%%%%%Loading vowel %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[vowela,fs] =  audioread("natural_vowel_a.wav");
+[vowela,fs] =  audioread("natural_vowel_i.wav");
 segmentlen = 100;
 noverlap = 90;
 NFFT = 128;
@@ -24,7 +24,8 @@ x = vowela(I0:Iend);
 x1 = filter(lowpass8000,x);%order200 equiripple FIR filter
 % plot_fft(x1,fs);
 x1 = x1.*hamming(length(x1));
-
+ plot_fft(x1,fs);
+ 
 fs2=16000;
 x2 =  resample(x1,1,3);
 plot_fft(x2,fs2)
@@ -54,7 +55,7 @@ hold on
 % plot(f,val3);
 homega = freqz(length(x2).*sqrt(G),A,fs2,'whole');
 f=1:16000;
-plot(f,10*log10(homega.^2)-50);
+plot(f,10*log10(homega.^2)-50,'r');
 % plot(f,howega)
 % excitation =filter(howega,1,freqsignal);
 
