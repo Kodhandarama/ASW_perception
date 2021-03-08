@@ -123,11 +123,11 @@ x = x1_rs;
 reconst_new = ramp_fix(x,fs,t_length_rise_fall); %62.5 ms
 [b_coeff,a_coeff] = butter(10,8000/(fs/2)); %butter(20,10000/(fs/2));
 r_filt = filter(b_coeff,a_coeff,reconst_new);
-reconst1 = r_filt/norm(r_filt) * 15;
-audiowrite('single_channel_stimuli.wav',4*reconst1,fs,'Bitspersample',16);
+reconst1 = r_filt/norm(r_filt) * 60;
+audiowrite('single_channel_stimuli.wav',reconst1,fs,'Bitspersample',16);
 %cnt1 = cnt1+1;
 % %
-player = audioplayer(4*reconst1,fs);
+player = audioplayer(reconst1,fs);
 play(player);
 
 generated_decorrelated_signals(filename);

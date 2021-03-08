@@ -6,7 +6,7 @@ n = length(signal);     % number of samples
 % frequency range
 f=1:fs;
 power = abs(yn).^2/n;    % power of the DFT
-plot(f,10*log10(power),'b')
+plot(f,10*log10(power))
 xlabel('Frequency')
 ylabel('Power')
 

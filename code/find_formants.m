@@ -4,7 +4,7 @@ load("lowpass4000.mat");
 load("lowpass8000.mat");
 load("lowpass8000_2.mat");
 %%%%%%%%%%%%%%%%%%Loading vowel %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[vowela,fs] =  audioread("natural_vowel_i.wav");
+[vowela,fs] =  audioread("natural_vowel_a.wav");
 segmentlen = 100;
 noverlap = 90;
 NFFT = 128;

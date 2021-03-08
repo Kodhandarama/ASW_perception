@@ -108,7 +108,7 @@ alpha1 = 1; alpha2 = 1;
 i = 1; 
 [e,pitch] = getpitch1(t,p1(i),p2(i),p3(i),fs,ptype);
 
-noise1 = wgn(length(e),1,(10*log10((rms(e)^2)/(10^(required_snr/10)))))';
+% noise1 = wgn(length(e),1,(10*log10((rms(e)^2)/(10^(required_snr/10)))))';
 
 % BPnoise  = filter(BPnoisefilter,noise1);
 % snrr = snr(e,BPnoise);
@@ -117,13 +117,16 @@ noise1 = wgn(length(e),1,(10*log10((rms(e)^2)/(10^(required_snr/10)))))';
 % alpha = ((rms(e)^2)/(rms(BPnoise)^2))^((gamma -1)/gamma);
 % scaling_factor = sqrt(alpha);
 % % pwelch(BPnoise * scaling_factor)
+e = e/norm(e) * 60;
+noise1 = wgn(length(e),1,(10*log10((rms(e)^2)/(10^(required_snr/10)))))';
+
 excitation = e + noise1;
 check_snr = snr(e,noise1);  
 
 % 
 % snrr = snr(e,noise1);
 % excitation = e + noise1;
-
+excitation = excitation/norm(excitation) * 60;
 
 [a,x1,f1_freq,sigma_freq] = genH1_vowel(fs,formantss,bandw,excitation) ;
 x1_rs = resample(x1,48000,fs); 
@@ -139,11 +142,11 @@ x = x1_rs; %(1:length(env_seq)).*env_seq;
 reconst_new = ramp_fix(x,fs,t_length_rise_fall); %62.5 ms
 [b_coeff,a_coeff] = butter(10,8000/(fs/2)); %butter(20,10000/(fs/2));
 r_filt = filter(b_coeff,a_coeff,reconst_new);
-reconst1 = r_filt/norm(r_filt) * 15;
-audiowrite('single_channel_stimuli.wav',4*reconst1,fs,'Bitspersample',16);
+reconst1 = r_filt/norm(r_filt) * 60;
+audiowrite('single_channel_stimuli.wav',reconst1,fs,'Bitspersample',16);
 %cnt1 = cnt1+1;
 % %
-player = audioplayer(4*reconst1,fs);
+player = audioplayer(reconst1,fs);
 play(player);
 
 generated_decorrelated_signals(filename);
@@ -151,6 +154,6 @@ generated_decorrelated_signals(filename);
 % unix(str)
 % str2 = ['python3 play_8chn.py ' filename ' &'];
 % unix(str2)
-
+%   7.8125e-04 
 temporaryvar=5
 end

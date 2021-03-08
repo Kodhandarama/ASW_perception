@@ -71,10 +71,10 @@ function [a,x,f1_freq,sigma_freq] = genH1_vowel(fs,f_from,sigma_from,e)
     %a = load('a.mat'); 
     homega = freqz(1.6328,a,fs,'whole');
     f=1:fs;
-    plot(f,10*log10(abs(homega).^2)-190,'r');
-    xlabel('Frequency(hz)')
-    ylabel('H(w)^2 (dB)')
-     hold on;
+%     plot(f,10*log10(abs(homega).^2)-210,'r');
+%     xlabel('Frequency(hz)')
+%     ylabel('H(w)^2 (dB)')
+%      hold on;
     x= filter(1,a,e);
    
 %     z=10*log10(abs(homega).^2)-50;
